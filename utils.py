@@ -26,8 +26,8 @@ with open('ces_exporter.yml', 'r', encoding='utf-8') as config_file:
     cfg = yaml.load(config_file, Loader=yaml.FullLoader)
 
 
-def heyingyun_api(namespace, project_id=cfg['project_id'],
-                  endpoint=cfg['endpoint'], method='GET', path='instances', params=None, body=None, api_version='v1.0'):
+def heyingyun_api(namespace, api_version, project_id=cfg['project_id'],
+                  endpoint=cfg['endpoint'], method='GET', path='instances', params=None, body=None):
     if body is None:
         body = {}
     if params is None:
@@ -50,9 +50,9 @@ async def fetch_data(session, batch, payload=None, project_id=cfg['project_id'],
     if payload is None:
         payload = {
             "metrics": batch,
-            "from": int(time.time() * 1000) - 300000,
+            "from": int((time.time() - 60) * 1000),
             "to": int(time.time() * 1000),
-            "period": "300",
+            "period": "1",
             "filter": "average"
         }
     sig = signer.Signer()
