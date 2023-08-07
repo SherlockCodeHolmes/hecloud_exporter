@@ -1,10 +1,11 @@
 from utils import contains_keywords, heyingyun_api
 
 
-def get_kafka_list():
+def get_kafka_instances():
     kafka_list = heyingyun_api(
         namespace='dms',
         params={"engine": "kafka", "name": "hy-wx-produce"},
+        api_version='v2'
     )
     data = [{"dimensions": [{"name": "kafka_instance_name", "value": i['name']},
                             {"name": "kafka_instance_id", "value": i['instance_id']}]}
@@ -13,9 +14,10 @@ def get_kafka_list():
     return data
 
 
-def get_redis_list():
+def get_redis_instances():
     redis_list = heyingyun_api(
-        namespace='dcs'
+        namespace='dcs',
+        api_version='v2'
     )
     data = [{"dimensions": [{"name": "dcs_instance_name", "value": i['name']},
                             {"name": "dcs_instance_id", "value": i['instance_id']}]}
@@ -50,9 +52,9 @@ def get_elb_instances():
 
 
 def merge_instances():
-    kafka_instances = get_kafka_list()
-    redis_instances = get_redis_list()
+    kafka_instances = get_kafka_instances()
+    redis_instances = get_redis_instances()
     rds_instances = get_rds_instances()
     elb_instances = get_elb_instances()
-    instances = kafka_instances + redis_instances + rds_instances + elb_instances
+    instances = rds_instances + elb_instances + redis_instances + kafka_instances
     return instances
